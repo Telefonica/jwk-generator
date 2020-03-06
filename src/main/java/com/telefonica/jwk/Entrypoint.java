@@ -89,7 +89,7 @@ public class Entrypoint {
     if (keySet) {
       JWKSet jwkSet = new JWKSet(jwk);
       JsonElement json = JSON.parse(jwkSet.toJSONObject(false).toJSONString());
-      System.out.println(gson.toJson(json));
+      System.out.println(GSON.toJson(json));
     } else {
       JsonElement json = JSON.parse(jwk.toJSONString());
       System.out.println(GSON.toJson(json));
