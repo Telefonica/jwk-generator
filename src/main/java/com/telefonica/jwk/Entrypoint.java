@@ -34,7 +34,6 @@ public class Entrypoint {
 
     Security.addProvider(new BouncyCastleProvider());
 
-    options = new Options();
 
     options.addOption("s", true, "Key Size in bits, required for RSA and oct key types. Must be an integer divisible by 8");
     options.addOption("u", true, "Usage, one of: enc, sig (optional)");
