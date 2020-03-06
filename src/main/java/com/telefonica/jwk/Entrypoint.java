@@ -88,7 +88,7 @@ public class Entrypoint {
   private static void printKey(boolean keySet, JWK jwk, Gson gson) {
     if (keySet) {
       JWKSet jwkSet = new JWKSet(jwk);
-      JsonElement json = new JsonParser().parse(jwkSet.toJSONObject(false).toJSONString());
+      JsonElement json = JSON.parse(jwkSet.toJSONObject(false).toJSONString());
       System.out.println(gson.toJson(json));
     } else {
       JsonElement json = new JsonParser().parse(jwk.toJSONString());
