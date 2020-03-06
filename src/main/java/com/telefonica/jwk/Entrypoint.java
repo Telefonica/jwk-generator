@@ -92,7 +92,7 @@ public class Entrypoint {
       System.out.println(gson.toJson(json));
     } else {
       JsonElement json = new JsonParser().parse(jwk.toJSONString());
-      System.out.println(gson.toJson(json));
+      System.out.println(GSON.toJson(json));
     }
   }
 
