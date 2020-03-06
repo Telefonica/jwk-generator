@@ -21,7 +21,7 @@ public class RSAKeyMaker {
    * @return
    * @throws NoSuchAlgorithmException
    */
-  public static String makeKid(BigInteger publicModulus) throws NoSuchAlgorithmException {
+  public static String createKid(BigInteger publicModulus) throws NoSuchAlgorithmException {
     MessageDigest md = MessageDigest.getInstance("SHA-1");
     md.update(publicModulus.toByteArray());
     BigInteger kid = new BigInteger(1, md.digest());
