@@ -42,7 +42,7 @@ public class RSAKeyMaker {
     try {
       KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
       generator.initialize(keySize);
-      KeyPair kp = generator.generateKeyPair();
+      KeyPair keyPair = generator.generateKeyPair();
 
       RSAPublicKey pub = (RSAPublicKey) kp.getPublic();
       RSAPrivateKey priv = (RSAPrivateKey) kp.getPrivate();
