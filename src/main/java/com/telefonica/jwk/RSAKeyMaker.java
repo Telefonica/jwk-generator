@@ -44,7 +44,7 @@ public class RSAKeyMaker {
       generator.initialize(keySize);
       KeyPair keyPair = generator.generateKeyPair();
 
-      RSAPublicKey pub = (RSAPublicKey) kp.getPublic();
+      RSAPublicKey publicKey = (RSAPublicKey) kp.getPublic();
       RSAPrivateKey privateKey = (RSAPrivateKey) kp.getPrivate();
 
       String kid = makeKid(pub.getModulus());
