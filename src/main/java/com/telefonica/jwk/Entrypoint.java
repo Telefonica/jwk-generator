@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Objects;
 
 public class Entrypoint {
-  private static String DEFAULT_KEY_SIZE = "2048";
-  private static Options options;
+  private static final String DEFAULT_KEY_SIZE = "2048";
+  private static final Options OPTIONS = new Options();
+  private static final JsonElement JSON = new JsonParser();
+  private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
   public static void main(String[] args) {
 
