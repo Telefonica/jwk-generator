@@ -91,7 +91,7 @@ public class Entrypoint {
       JsonElement json = JSON.parse(jwkSet.toJSONObject(false).toJSONString());
       System.out.println(gson.toJson(json));
     } else {
-      JsonElement json = new JsonParser().parse(jwk.toJSONString());
+      JsonElement json = JSON.parse(jwk.toJSONString());
       System.out.println(GSON.toJson(json));
     }
   }
