@@ -74,7 +74,6 @@ public class Entrypoint {
       JWK jwk = RSAKeyMaker.make(keySize, keyUse, algorithm);
 
       // round trip it through GSON to get a prettyprinter
-      Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
       printKey(keySet, jwk);
     } catch (NumberFormatException e) {
