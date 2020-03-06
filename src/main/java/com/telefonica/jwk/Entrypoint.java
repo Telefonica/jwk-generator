@@ -76,7 +76,7 @@ public class Entrypoint {
       // round trip it through GSON to get a prettyprinter
       Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-      printKey(keySet, jwk, gson);
+      printKey(keySet, jwk);
     } catch (NumberFormatException e) {
       printUsageAndExit("Invalid key size: " + e.getMessage());
     } catch (ParseException e) {
