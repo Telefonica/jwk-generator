@@ -13,7 +13,6 @@ import com.nimbusds.jose.jwk.KeyUse;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
@@ -27,28 +26,52 @@ import java.util.Objects;
 public class Entrypoint {
   private static final String DEFAULT_KEY_SIZE = "2048";
   private static final Options OPTIONS = new Options();
-  private static final JsonElement JSON = new JsonParser();
+  private static final JsonParser JSON = new JsonParser();
   private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+  private static String size = null;
+  private static KeyUse keyUse = null;
+  private static Algorithm algorithm = JWEAlgorithm.RSA_OAEP_256;
+  private static boolean keySet = true;
 
   public static void main(String[] args) {
 
+    // init Cryptographic provider as plain java does not support all the algorithms (particularlly RSA and AES galois)
     Security.addProvider(new BouncyCastleProvider());
 
 
-    options.addOption("s", true, "Key Size in bits, required for RSA and oct key types. Must be an integer divisible by 8");
-    options.addOption("u", true, "Usage, one of: enc, sig (optional)");
-    options.addOption("S", false, "Wrap the generated key in a KeySet");
+    OPTIONS.addOption("s", true, "Key Size in bits, required for RSA and oct key types. Must be an integer divisible by 8");
+    OPTIONS.addOption("u", true, "Usage, one of: enc, sig (optional)");
+    OPTIONS.addOption("S", false, "Wrap the generated key in a KeySet");
 
+    parseCommandLine(args);
+
+    if (Objects.isNull(size)) {
+      size = DEFAULT_KEY_SIZE;
+    }
+
+    Integer keySize = Integer.decode(size);
+    if (keySize % 8 != 0) {
+      printUsageAndExit("Key size (in bits) must be divisible by 8, got " + keySize);
+    }
+
+    JWK jwk = RSAKeyMaker.make(keySize, keyUse, algorithm);
+
+    // round trip it through GSON to get a prettyprinter
+
+    printKey(keySet, jwk);
+
+  }
+
+  private static void parseCommandLine(String[] args) {
     CommandLineParser parser = new PosixParser();
     try {
-      CommandLine cmd = parser.parse(options, args);
+      CommandLine cmd = parser.parse(OPTIONS, args);
 
-      String size = cmd.getOptionValue("s");
+      size = cmd.getOptionValue("s");
       String use = cmd.getOptionValue("u");
-      boolean keySet = cmd.hasOption("S");
-      Algorithm algorithm = JWEAlgorithm.RSA_OAEP_256;
+      keySet = cmd.hasOption("S");
 
-      KeyUse keyUse = null;
+      keyUse = null;
       if (use != null) {
         if (use.equals("sig")) {
           keyUse = KeyUse.SIGNATURE;
@@ -60,27 +83,12 @@ public class Entrypoint {
         }
       }
 
-
-      // surrounding try/catch catches numberformatexception from this
-      if (Objects.isNull(size)) {
-        size = DEFAULT_KEY_SIZE;
-      }
-
-      Integer keySize = Integer.decode(size);
-      if (keySize % 8 != 0) {
-        printUsageAndExit("Key size (in bits) must be divisible by 8, got " + keySize);
-      }
-
-      JWK jwk = RSAKeyMaker.make(keySize, keyUse, algorithm);
-
-      // round trip it through GSON to get a prettyprinter
-
-      printKey(keySet, jwk);
     } catch (NumberFormatException e) {
       printUsageAndExit("Invalid key size: " + e.getMessage());
     } catch (ParseException e) {
       printUsageAndExit("Failed to parse arguments: " + e.getMessage());
     }
+
   }
 
 
@@ -104,7 +112,7 @@ public class Entrypoint {
     List<String> optionOrder = Arrays.asList("s", "u");
 
     HelpFormatter formatter = new HelpFormatter();
-    formatter.printHelp("java -jar json-web-key-generator.jar -t <keyType> [options]", options);
+    formatter.printHelp("java -jar json-web-key-generator.jar -t <keyType> [options]", OPTIONS);
 
     // kill the program
     System.exit(1);

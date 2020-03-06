@@ -21,7 +21,7 @@ public class RSAKeyMaker {
    * @return
    * @throws NoSuchAlgorithmException
    */
-  public static String createKid(BigInteger publicModulus) throws NoSuchAlgorithmException {
+  public static String makeKid(BigInteger publicModulus) throws NoSuchAlgorithmException {
     MessageDigest md = MessageDigest.getInstance("SHA-1");
     md.update(publicModulus.toByteArray());
     BigInteger kid = new BigInteger(1, md.digest());
@@ -44,13 +44,13 @@ public class RSAKeyMaker {
       generator.initialize(keySize);
       KeyPair keyPair = generator.generateKeyPair();
 
-      RSAPublicKey publicKey = (RSAPublicKey) kp.getPublic();
-      RSAPrivateKey privateKey = (RSAPrivateKey) kp.getPrivate();
+      RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
+      RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
 
-      String kid = makeKid(pub.getModulus());
+      String kid = makeKid(publicKey.getModulus());
 
-      RSAKey rsaKey = new RSAKey.Builder(pub)
-        .privateKey(priv)
+      RSAKey rsaKey = new RSAKey.Builder(publicKey)
+        .privateKey(privateKey)
         .keyUse(keyUse)
         .algorithm(keyAlg)
         .keyID(kid)
