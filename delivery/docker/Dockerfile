@@ -9,6 +9,9 @@ ARG AWS_ACCESS_KEY_ID
 WORKDIR /opt/app
 
 COPY pom.xml ./pom.xml
+
+RUN mvn dependency:resolve-plugins dependency:resolve clean package
+
 COPY src/ ./src/
 
 RUN mvn clean package
