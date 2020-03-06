@@ -105,7 +105,6 @@ public class Entrypoint {
     List<String> optionOrder = Arrays.asList("s", "u");
 
     HelpFormatter formatter = new HelpFormatter();
-    //formatter.setOptionComparator((o1, o2) -> optionOrder.indexOf(((Option) o1).getOpt()) - optionOrder.indexOf(((Option) o2).getOpt()));
     formatter.printHelp("java -jar json-web-key-generator.jar -t <keyType> [options]", options);
 
     // kill the program
