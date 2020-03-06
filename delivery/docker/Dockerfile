@@ -16,7 +16,7 @@ COPY src/ ./src/
 
 RUN mvn clean package
 
-FROM openjdk:11
+FROM openjdk:11.0.6-slim
 
 COPY --from=mvn  /opt/app/target/jwk-generator-1.0-SNAPSHOT-jar-with-dependencies.jar /usr/app/jwk-generator-1.0-SNAPSHOT-jar-with-dependencies.jar
 
