@@ -13,6 +13,7 @@ You can also define the following arguments:
  -s <arg>   Key Size in bits. Must be an integer divisible by 8. By default 2048.
  -u <arg>   Usage, one of: enc, sig (optional). By default enc.
  -S         Wrap the generated key in a KeySet
+ -o <arg>   Write output to file
 ```
 
 # Delivery
@@ -28,6 +29,11 @@ You can execute the following command to get an RSA keys in JWK format:
 
 ```
 docker run jwk-generator:1.0
+```
+
+Write to a file in the docker file system (useful for shared volumes):
+```
+docker run jwk-generator:1.0 -o /usr/volumes/keys.txt
 ```
 
 ## Building and publishing

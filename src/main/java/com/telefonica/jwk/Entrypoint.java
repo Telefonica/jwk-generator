@@ -18,6 +18,11 @@ import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +37,7 @@ public class Entrypoint {
   private static KeyUse keyUse = null;
   private static Algorithm algorithm = JWEAlgorithm.RSA_OAEP_256;
   private static boolean keySet = true;
+  private static String outFile = null;
 
   public static void main(String[] args) {
 
@@ -42,23 +48,33 @@ public class Entrypoint {
     OPTIONS.addOption("s", true, "Key Size in bits, required for RSA and oct key types. Must be an integer divisible by 8");
     OPTIONS.addOption("u", true, "Usage, one of: enc, sig (optional)");
     OPTIONS.addOption("S", false, "Wrap the generated key in a KeySet");
+    OPTIONS.addOption("o", true, "Write output to file");
+
 
     parseCommandLine(args);
 
-    if (Objects.isNull(size)) {
-      size = DEFAULT_KEY_SIZE;
+    try {
+
+      if (Objects.isNull(size)) {
+        size = DEFAULT_KEY_SIZE;
+      }
+
+      Integer keySize = Integer.decode(size);
+      if (keySize % 8 != 0) {
+        printUsageAndExit("Key size (in bits) must be divisible by 8, got " + keySize);
+      }
+
+
+      JWK jwk = RSAKeyMaker.make(keySize, keyUse, algorithm);
+
+      if (outFile == null) {
+        printKey(keySet, jwk);
+      } else {
+        writeKeyToFile(keySet, outFile, jwk);
+      }
+    } catch (IOException e) {
+      printUsageAndExit("Could not read write to File the KeySet: " + e.getMessage());
     }
-
-    Integer keySize = Integer.decode(size);
-    if (keySize % 8 != 0) {
-      printUsageAndExit("Key size (in bits) must be divisible by 8, got " + keySize);
-    }
-
-    JWK jwk = RSAKeyMaker.make(keySize, keyUse, algorithm);
-
-    // round trip it through GSON to get a prettyprinter
-
-    printKey(keySet, jwk);
 
   }
 
@@ -83,12 +99,32 @@ public class Entrypoint {
         }
       }
 
+      outFile = cmd.getOptionValue("o");
+
     } catch (NumberFormatException e) {
       printUsageAndExit("Invalid key size: " + e.getMessage());
     } catch (ParseException e) {
       printUsageAndExit("Failed to parse arguments: " + e.getMessage());
     }
 
+  }
+
+  private static void writeKeyToFile(boolean keySet, String outFile, JWK jwk) throws IOException {
+    JsonElement json;
+    File output = new File(outFile);
+    if (keySet) {
+      JWKSet jwkSet = new JWKSet(jwk);
+      json = JSON.parse(jwkSet.toJSONObject(false).toJSONString());
+    } else {
+      json = JSON.parse(jwk.toJSONString());
+    }
+    Writer os = null;
+    try {
+      os = new BufferedWriter(new FileWriter(output));
+      os.write(GSON.toJson(json));
+    } finally {
+      os.close();
+    }
   }
 
 
