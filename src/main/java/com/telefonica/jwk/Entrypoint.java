@@ -26,7 +26,7 @@ import java.io.Writer;
 import java.security.Security;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public class Entrypoint {
   private static final String DEFAULT_KEY_SIZE = "2048";
@@ -55,9 +55,8 @@ public class Entrypoint {
 
     try {
 
-      if (Objects.isNull(size)) {
-        size = DEFAULT_KEY_SIZE;
-      }
+      size = Optional.ofNullable(size)
+        .orElse(DEFAULT_KEY_SIZE);
 
       Integer keySize = Integer.decode(size);
       if (keySize % 8 != 0) {
