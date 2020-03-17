@@ -1,4 +1,4 @@
 #!/bin/sh
 set -e
 
-exec "$@"
+exec /opt/app/genkey.sh "$@"

@@ -18,10 +18,12 @@ RUN mvn clean package
 
 FROM openjdk:11.0.6-slim
 
-COPY --from=mvn  /opt/app/target/jwk-generator-1.0-SNAPSHOT-jar-with-dependencies.jar /usr/app/jwk-generator-1.0-SNAPSHOT-jar-with-dependencies.jar
+WORKDIR /opt/app
 
-COPY delivery/docker/docker-entrypoint.sh /usr/local/bin/
+COPY --from=mvn  /opt/app/target/jwk-generator-1.0-SNAPSHOT-jar-with-dependencies.jar /opt/app/jwk-generator-1.0.jar
 
-WORKDIR /usr/app
-ENTRYPOINT ["docker-entrypoint.sh"]
-CMD ["java", "-jar", "jwk-generator-1.0-SNAPSHOT-jar-with-dependencies.jar", "-S"]
+COPY delivery/docker/docker-entrypoint.sh /opt/app/
+COPY delivery/docker/genkey.sh /opt/app/
+
+ENTRYPOINT ["/opt/app/docker-entrypoint.sh"]
+CMD ["-S"]
