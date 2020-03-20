@@ -121,6 +121,8 @@ public class Entrypoint {
     try {
       os = new BufferedWriter(new FileWriter(output));
       os.write(GSON.toJson(json));
+      String keySetMsg = keySet ? "keyset" : "keys";
+      System.out.println("Writed JWK " + keySetMsg + " to " + outFile);
     } finally {
       os.close();
     }
