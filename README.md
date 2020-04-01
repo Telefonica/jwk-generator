@@ -40,7 +40,7 @@ docker run jwk-generator:1.0.0 -o /usr/volumes/keys.txt
 
 You should define the environment variables with the repository:
 ```
-export REGISTRY_SERVER=myrepo.example.com
+export REGISTRY_SERVER=index.docker.io
 export REGISTRY_USER=xxx
 export REGISTRY_PASSWORD=xxxx
 
@@ -49,4 +49,4 @@ Run the command
 ./delivery/pipelines/publish-artifact.sh --version=1.0.0
 ```
 
-This will do the building of the docker imagen and pull to the remote registry with the tag (baikal/jwk-generator:${VERSION})
+This will do the building of the docker imagen and pull to the remote registry with the tag (telefonica/jwk-generator:${VERSION})

@@ -9,7 +9,7 @@ ARG_DEFS=(
 )
 
 function init() {
-  SERVICE_NAME=baikal/jwk-generator
+  SERVICE_NAME=telefonica/jwk-generator
   TAG=${VERSION:-snapshot}
   REGISTRY_SERVER=${REGISTRY_SERVER:-}
   # Ensure the registry ends with a slash
